@@ -210,3 +210,54 @@ currentDate = Format(Now(), "yyyy_mm_dd")
     Set excelApp = Nothing
     
 End Sub
+Sub Envia_Grafico()
+
+    Dim objOutlook As Object
+    Dim objMailItem As Object
+    Dim objRecipient As Object
+    Dim objNameSpace As Object
+    Dim strCaminho As String
+    Dim strNomeArquivo As String
+    Dim dtRef As Double
+    Dim rngmail, strMail, strCC As String
+    
+   strDt = Trim(Format(Day(Range("Dtref")), "00")) + "_" + Trim(Format(Month(Range("Dtref")), "00")) + "_" + Trim(Year(Range("Dtref")))
+    
+
+        
+    Dim rng As Range
+    Dim OutApp As Object
+    Dim OutMail As Object
+    Set rng = Nothing
+   
+   
+   Set rng = Sheets("Graphs_Weekly_Slaughter").Range("rgTable").SpecialCells(xlCellTypeVisible)
+     Set OutApp = CreateObject("Outlook.Application")
+
+
+    ' Define o gráfico a ser salvo (substitua "Chart 1" pelo nome do seu gráfico)
+    Set chrt = ActiveSheet.ChartObjects("Gráfico 1")
+
+    ' Define o caminho e o nome do arquivo PNG
+    strCaminho = "O:\Cruz\Inteligencia\Karl\1. Australia\Support_Files\" ' Substitua pelo caminho desejado
+    strNomeArquivo = "AUS_Weekly_Slaughter_" & Format(Now, "YYYY_MM_DD") & ".png"
+
+    ' Exporta o gráfico como PNG
+    chrt.Chart.Export Filename:=strCaminho & strNomeArquivo, FilterName:="PNG"
+
+
+
+
+
+    Set OutMail = OutApp.CreateItem(0)
+    
+
+   With OutMail
+      .To = Range("rgMail_2").Value
+      .cc = Range("rgCC").Value
+      .htmlbody = "<html><body>Good morning!<br><br>Please find attached the Austrlian weekly cattle slaughter (MLA numbers):<br>" & RangetoHTML(rng) & "<br><img src='" & strCaminho & strNomeArquivo & "'></body></html>"
+      .Subject = Range("rgSub").Value
+      .Display
+   End With
+
+End Sub
