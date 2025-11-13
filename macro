@@ -92,3 +92,121 @@ Function RangetoHTML(rng As Range)
     Set TempWB = Nothing
 
 End Function
+
+
+
+
+Sub PPT()
+Dim pptApp As Object
+    Dim pptPres As Object
+    Dim pptSlide As Object
+    Dim pptShape As Object
+    Dim excelApp As Object
+    Dim excelWB As Object
+    Dim existingPicture As Object
+    Dim newPicture As Object
+    Dim cellValue As String
+Set pptApp = CreateObject("PowerPoint.Application")
+Set pptPres = pptApp.Presentations.Open("O:\Cruz\Inteligencia\USA\USDA\Imports\Report\US_Beef_Imports.pptx")
+Set excelWB = ThisWorkbook
+currentDate = Format(Now(), "yyyy_mm_dd")
+'Refresh all linked charts
+    For Each Slide In pptPres.Slides
+        For Each Shape In Slide.Shapes
+            If Shape.HasChart Then
+                Set myChart = Shape.Chart
+                myChart.ChartData.Activate
+                myChart.Refresh
+                Set excelWB = myChart.ChartData.Workbook
+                Set App = excelWB.Application
+            End If
+        Next
+    Next
+    Set myChart = Nothing
+
+'1st Slide
+    Set pptSlide = pptPres.Slides(1)
+    Set pptShape = pptSlide.Shapes("Subtitle 2")
+    cellValue = excelWB.Sheets("PPT").Range("M7").Text
+    pptShape.TextFrame.TextRange.Text = cellValue
+
+'2nd Slide
+    Set pptSlide = pptPres.Slides(2)
+    'comment 1
+    cellValue = excelWB.Sheets("PPT").Range("M8").Text
+    Set pptShape = pptSlide.Shapes("Comment 1")
+    pptShape.TextFrame.TextRange.Text = cellValue
+    'comment 2
+    Set pptShape = pptSlide.Shapes("Comment 2")
+    cellValue = excelWB.Sheets("PPT").Range("Y8").Text
+    pptShape.TextFrame.TextRange.Text = cellValue
+    'table
+    Set existingPicture = pptSlide.Shapes("Picture 1")
+    Set excelRange = excelWB.Sheets("PPT").Range("D3:H15")
+    excelRange.CopyPicture
+    pptSlide.Shapes.PasteSpecial DataType:=ppPasteEnhancedMetafile
+    Set newPicture = pptSlide.Shapes(pptSlide.Shapes.Count)
+    newPicture.Left = existingPicture.Left
+    newPicture.Top = existingPicture.Top
+    newPicture.Width = existingPicture.Width
+    newPicture.Height = existingPicture.Height
+    existingPicture.Delete
+    newPicture.Name = "Picture 1"
+    
+'3rd Slide
+    Set pptSlide = pptPres.Slides(3)
+    'comment 1
+    cellValue = excelWB.Sheets("PPT").Range("M35").Text
+    Set pptShape = pptSlide.Shapes("comment 1")
+    pptShape.TextFrame.TextRange.Text = cellValue
+    'comment 2
+    cellValue = excelWB.Sheets("PPT").Range("Y35").Text
+    Set pptShape = pptSlide.Shapes("comment 2")
+    pptShape.TextFrame.TextRange.Text = cellValue
+    
+'4th Slide
+    Set pptSlide = pptPres.Slides(4)
+    'comment 1
+    cellValue = excelWB.Sheets("PPT").Range("M62").Text
+    Set pptShape = pptSlide.Shapes("comment 1")
+    pptShape.TextFrame.TextRange.Text = cellValue
+    'comment 2
+    cellValue = excelWB.Sheets("PPT").Range("Y62").Text
+    Set pptShape = pptSlide.Shapes("comment 2")
+    pptShape.TextFrame.TextRange.Text = cellValue
+
+'5th Slide
+    Set pptSlide = pptPres.Slides(5)
+    'comment 1
+    cellValue = excelWB.Sheets("PPT").Range("M88").Text
+    Set pptShape = pptSlide.Shapes("comment 1")
+    pptShape.TextFrame.TextRange.Text = cellValue
+    'comment 2
+    cellValue = excelWB.Sheets("PPT").Range("Y88").Text
+    Set pptShape = pptSlide.Shapes("comment 2")
+    pptShape.TextFrame.TextRange.Text = cellValue
+
+'6th Slide
+    Set pptSlide = pptPres.Slides(6)
+    'comment 1
+    cellValue = excelWB.Sheets("PPT").Range("M114").Text
+    Set pptShape = pptSlide.Shapes("comment 1")
+    pptShape.TextFrame.TextRange.Text = cellValue
+    'comment 2
+    cellValue = excelWB.Sheets("PPT").Range("Y114").Text
+    Set pptShape = pptSlide.Shapes("comment 2")
+    pptShape.TextFrame.TextRange.Text = cellValue
+    
+'Save ppt
+    pptPres.Save
+    pptApp.ActivePresentation.SaveAs "O:\Cruz\Inteligencia\USA\USDA\Imports\PDF\US_Beef_Imports_" & currentDate & ".pdf", 32
+    
+'Clear objects from memory
+    Set pptShape = Nothing
+    Set pptSlide = Nothing
+    Set pptPres = Nothing
+    Set pptApp = Nothing
+    Set excelWB = Nothing
+    Set excelApp = Nothing
+    
+End Sub
